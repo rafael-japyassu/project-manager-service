@@ -1,10 +1,10 @@
 {
   "type": "postgres",
   "host": "localhost",
-  "port": 5432,
+  "port": 5435,
   "username": "postgres",
-  "password": "postgres",
-  "database": "db_project_manager",
+  "password": "docker",
+  "database": "project_manager",
   "entities": [
     "./src/models/*.ts"
   ],

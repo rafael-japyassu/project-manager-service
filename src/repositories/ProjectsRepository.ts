@@ -16,6 +16,13 @@ class ProjectsRepository implements IProjectsRepository {
     });
   }
 
+  public async findAllOfUser(user_id: string): Promise<Project[]> {
+    return this.ormRepository.find({
+      relations: ['client'],
+      where: { user_id },
+    });
+  }
+
   public async findById(id: string): Promise<Project | undefined> {
     return this.ormRepository.findOne(id, {
       relations: ['client'],
@@ -24,6 +31,7 @@ class ProjectsRepository implements IProjectsRepository {
 
   public async create({
     client_id,
+    user_id,
     description,
     logo,
     name,
@@ -31,6 +39,7 @@ class ProjectsRepository implements IProjectsRepository {
   }: ICreateProjectDTO): Promise<Project> {
     const project = this.ormRepository.create({
       client_id,
+      user_id,
       description,
       logo,
       name,

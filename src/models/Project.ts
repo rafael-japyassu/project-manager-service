@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import ProjectStatus from '../enums/ProjectStatus';
 import Client from './Client';
+import User from './User';
 
 @Entity('projects')
 export default class Project {
@@ -24,6 +25,13 @@ export default class Project {
   @ManyToOne(() => Client)
   @JoinColumn({ name: 'client_id' })
   client: string;
+
+  @Column()
+  user_id: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({
     type: 'varchar',

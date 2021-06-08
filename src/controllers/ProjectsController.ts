@@ -2,17 +2,21 @@ import { Request, Response } from 'express';
 import ClientRepository from '../repositories/ClientRepository';
 import ProjectsRepository from '../repositories/ProjectsRepository';
 import CreateProjectService from '../services/CreateProjectService';
-import ListallProjectsService from '../services/ListAllProjectService';
 import UpdateProjectService from '../services/UpdateProjectService';
 import ShowProjectService from '../services/ShowProjectService';
 import UpdateProjectStatusService from '../services/UpdateProjectStatusService';
+import UploadLogoOfProjectService from '../services/UploadLogoOfProjectService';
+import ListAllProjectsOfUserService from '../services/ListAllProjectsOfUserService';
 
 class ProjetcsController {
   public async index(request: Request, response: Response): Promise<Response> {
+    const { user_id } = request.params;
     const projectsRepository = new ProjectsRepository();
-    const projectsService = new ListallProjectsService(projectsRepository);
+    const projectsService = new ListAllProjectsOfUserService(
+      projectsRepository,
+    );
 
-    const projects = await projectsService.execute();
+    const projects = await projectsService.execute(user_id);
 
     return response.json(projects);
   }
@@ -28,7 +32,7 @@ class ProjetcsController {
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
-    const { name, client_id, description, logo } = request.body;
+    const { name, client_id, description, user_id } = request.body;
     const projectsRepository = new ProjectsRepository();
     const clientRepository = new ClientRepository();
     const createProject = new CreateProjectService(
@@ -39,11 +43,29 @@ class ProjetcsController {
     const project = await createProject.execute({
       name,
       client_id,
+      user_id,
       description,
-      logo,
+      logo: request.file?.filename,
     });
 
     return response.status(201).json(project);
+  }
+
+  public async uploadLogo(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    const { id } = request.params;
+    const { filename } = request.file;
+    const projectsRepository = new ProjectsRepository();
+    const service = new UploadLogoOfProjectService(projectsRepository);
+
+    const project = await service.execute({
+      id,
+      logo: filename,
+    });
+
+    return response.json(project);
   }
 
   public async update(request: Request, response: Response): Promise<Response> {

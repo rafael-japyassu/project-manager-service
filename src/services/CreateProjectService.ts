@@ -6,9 +6,10 @@ import ProjectStatus from '../enums/ProjectStatus';
 
 interface IRequest {
   name: string;
-  logo: string;
+  logo?: string;
   description: string;
   client_id: string;
+  user_id: string;
 }
 
 class CreateProjectService {
@@ -29,6 +30,7 @@ class CreateProjectService {
     client_id,
     description,
     logo,
+    user_id,
   }: IRequest): Promise<Project> {
     const verifyClient = await this.clientRepository.findById(client_id);
 
@@ -42,6 +44,7 @@ class CreateProjectService {
       description,
       logo,
       status: ProjectStatus.NEW,
+      user_id,
     });
 
     return project;
